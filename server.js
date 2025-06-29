@@ -2,12 +2,14 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const globalErrorHandler = require("./middlewares/errorMiddleware.js");
-
+const brandRoute = require("./routes/brandRoute");
+const productRoute = require("./routes/productRoute");
 dotenv.config({path: "config.env"});
 
 const app = express();
 const dbConnection = require("./config/database.js");
 const categoryRoute = require("./routes/categoryRoute");
+const subCategoryRoute = require("./routes/subCategoryRoute");
 const ApiError = require("./utils/apiError.js");
 
 dbConnection();
@@ -22,9 +24,12 @@ if(process.env.NODE_ENV === "development"){
     app.use(morgan("combined"));
 }
 
-//Routes
+//Routes 
+///main url for categories and subcategories.
 app.use("/api/v1/categories", categoryRoute);
-
+app.use("/api/v1/subcategories", subCategoryRoute);
+app.use("/api/v1/brands", brandRoute);
+app.use("/api/v1/products", productRoute);
 /// Middleware to handle 404 errors
 app.use((req, res, next) => {
     next(new ApiError(`Can't find ${req.originalUrl} on this server!`, 404));

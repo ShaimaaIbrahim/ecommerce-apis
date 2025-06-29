@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 
 /// connect to database
-const dbConnection = () => mongoose.connect(process.env.DB_URL)
+const dbConnection = () => mongoose.connect(process.env.DB_URL, {
+    dbName: 'ecommerce-database' 
+  })
 .then((conn) => {
     console.log(`Connected to MongoDB ${conn.connection.host}`);
 });
