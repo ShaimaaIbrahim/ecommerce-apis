@@ -1,21 +1,29 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const globalErrorHandler = require("./middlewares/errorMiddleware.js");
+const authRoute = require("./routes/auth");
 const brandRoute = require("./routes/brandRoute");
 const productRoute = require("./routes/productRoute");
+const configRoute = require('./routes/config.js');
+
+const dotenv = require("dotenv");
 dotenv.config({path: "config.env"});
 
 const app = express();
-const dbConnection = require("./config/database.js");
+const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const ApiError = require("./utils/apiError.js");
+const passport = require("passport");
 
 dbConnection();
 
 /// middleware
 app.use(express.json());
+
+// Passport middleware
+app.use(passport.initialize());
+require('./config/passport');
 
 if(process.env.NODE_ENV === "development"){
     app.use(morgan("dev"));
@@ -25,6 +33,10 @@ if(process.env.NODE_ENV === "development"){
 }
 
 //Routes 
+// auth route
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/config", configRoute);
+
 ///main url for categories and subcategories.
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/subcategories", subCategoryRoute);
